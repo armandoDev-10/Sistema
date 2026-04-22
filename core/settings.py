@@ -59,7 +59,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,7 +115,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Muestra corr
 # EMAIL_HOST_PASSWORD = 'tu_contraseña'
 
 # CSRF y seguridad para PythonAnywhere
-CSRF_TRUSTED_ORIGINS = ['https://*.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ['https://armandodev.pythonanywhere.com']
 
 
 # Internationalization
