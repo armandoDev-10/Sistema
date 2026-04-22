@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Incidencias{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Mis incidencias</h4>
+        <a href="{% url 'crear_incidencia' %}" class="btn btn-danger btn-sm"><i class="fas fa-plus-circle"></i> Nueva incidencia</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Título</th><th>Descripción</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                    {% for inc in incidencias %}
+                    <tr>
+                        <td>{{ inc.titulo }}</td>
+                        <td>{{ inc.descripcion|truncatechars:60 }}</td>
+                        <td>{{ inc.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if inc.resuelta %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Resuelta</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if inc.resuelta %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Resuelta</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> Pendiente</span>
+                            {% endif %}
+                            <br>
+                            <span class="badge 
+                                {% if inc.prioridad == 'critica' %}bg-danger
+                                {% elif inc.prioridad == 'alta' %}bg-orange
+                                {% elif inc.prioridad == 'media' %}bg-primary
+                                {% else %}bg-secondary{% endif %} mt-1">
+                                {{ inc.get_prioridad_display }}
+                            </span>
+                        </td>
+                        <td><a href="{% url 'editar_incidencia' inc.pk %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i> Editar</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-bug fa-2x mb-2 d-block"></i> No hay incidencias registradas</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

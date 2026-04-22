@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Historial de notificaciones{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="fas fa-history me-2"></i> Historial de notificaciones</h4>
+        <a href="{% url 'mis_notificaciones' %}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-bell"></i> Ver pendientes
+        </a>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for notif in notificaciones %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ notif.titulo }}</h5>
+                        <p class="mb-1">{{ notif.mensaje }}</p>
+                        <small class="text-muted">Leída el: {{ notif.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    {% if notif.enlace %}
+                        <a href="{{ notif.enlace }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-archive fa-3x mb-3"></i>
+                <p>No hay notificaciones en el historial.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

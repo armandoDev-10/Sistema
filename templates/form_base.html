@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h4 class="mb-0">{% block form_title %}Formulario{% endblock %}</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ field.errors.0 }}
+                                </div>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">{% block button_text %}Enviar{% endblock %}</button>
+                    </div>
+                </form>
+                <div class="mt-3 text-center">
+                    {% block extra_links %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Agregar clase 'form-control' a todos los inputs, selects y textareas
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+        // Para checkboxes y radios, agregar form-check-input
+        const checks = document.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+        checks.forEach(ch => ch.classList.add('form-check-input'));
+    });
+</script>
+{% endblock %}

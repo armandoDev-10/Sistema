@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Actividades{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+        <h4 class="mb-0">
+            {% if user.rol == 'colaborador' %}Mis actividades{% else %}Actividades de mi sucursal{% endif %}
+        </h4>
+        <div>
+            {% if user.rol == 'colaborador' %}
+                <a href="{% url 'crear_actividad' %}" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Nueva actividad</a>
+            {% endif %}
+            {% if user.rol == 'lider' %}
+                <a href="{% url 'reporte_actividades' %}" class="btn btn-info btn-sm text-white"><i class="fas fa-chart-line"></i> Reporte</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Fecha actividad</th>
+                        <th>Registrado</th>
+                        {% if user.rol == 'lider' %}<th>Colaborador</th>{% endif %}
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for act in actividades %}
+                    <tr>
+                        <td>{{ act.titulo }}</td>
+                        <td>{{ act.descripcion|truncatechars:60 }}</td>
+                        <td>{{ act.fecha_actividad|date:"d/m/Y" }}</td>
+                        <td>{{ act.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                        {% if user.rol == 'lider' %}
+                            <td>{{ act.colaborador.username }}</td>
+                        {% endif %}
+                        <td>
+                            {% if user.rol == 'colaborador' %}
+                                <a href="{% url 'editar_actividad' act.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="{% url 'eliminar_actividad' act.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            {% elif user.rol == 'lider' %}
+                                <a href="{% url 'detalle_actividad' act.pk %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <!-- Opcional: si líder puede eliminar -->
+                                <a href="{% url 'eliminar_actividad' act.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if user.rol == 'lider' %}5{% else %}4{% endif %}" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i> No hay actividades registradas
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

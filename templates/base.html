@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gestión{% endblock %}</title>
+    <!-- Bootstrap 5 CSS + Icons + Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fc;
+        }
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            transition: 0.2s;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .bg-purple {
+            background-color: #6f42c1;
+        }
+        .bg-orange {
+            background-color: #fd7e14;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navbar Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <!-- Logo / Marca -->
+            <a class="navbar-brand fw-bold" href="{% url 'lista_actividades' %}">
+                <i class="fas fa-clipboard-list text-primary me-2"></i> GestiónApp
+            </a>
+
+            <!-- Botón hamburguesa para móvil -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido colapsable -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <!-- Enlaces de navegación (izquierda) -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'lista_actividades' %}">Actividades</a></li>
+                        {% if user.rol == 'colaborador' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'crear_actividad' %}"><i class="fas fa-plus-circle me-1"></i>Nueva actividad</a></li>
+                        {% endif %}
+                        {% if user.rol == 'lider' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'lista_incidencias' %}">Incidencias</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'crear_incidencia' %}"><i class="fas fa-exclamation-triangle me-1"></i>Nueva incidencia</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'reporte_actividades' %}">Reporte</a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                <!-- Elementos a la derecha: notificaciones + dropdown usuario -->
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                        <!-- Campanita de notificaciones (solo líderes o staff) -->
+                        {% if user.rol == 'lider' or user.is_staff %}
+                            <a href="{% url 'mis_notificaciones' %}" class="nav-link position-relative me-2" id="notificacionesLink">
+                                <i class="fas fa-bell fa-lg"></i>
+                                <span id="notificacionesCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size: 0.7rem;">
+                                    0
+                                </span>
+                            </a>
+                        {% endif %}
+
+                        <!-- Dropdown del perfil -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle fs-5"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="fas fa-id-card me-2"></i> Mi perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Iniciar sesión</a>
+                        <a href="{% url 'registro' %}" class="btn btn-primary">Registrarse</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="container my-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center text-muted py-4 border-top mt-5">
+        <small>&copy; {% now "Y" %} Sistema de Gestión - Todos los derechos reservados</small>
+    </footer>
+
+    <!-- Bootstrap JS Bundle con Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para contador de notificaciones (solo líderes/staff) -->
+    {% if user.is_authenticated and user.rol == 'lider' or user.is_staff %}
+    <script>
+        function actualizarContadorNotificaciones() {
+            fetch('{% url "contar_notificaciones" %}')
+                .then(response => response.json())
+                .then(data => {
+                    const countSpan = document.getElementById('notificacionesCount');
+                    if (data.count > 0) {
+                        countSpan.textContent = data.count;
+                        countSpan.classList.remove('d-none');
+                    } else {
+                        countSpan.textContent = '0';
+                        countSpan.classList.add('d-none');
+                    }
+                })
+                .catch(error => console.error('Error al obtener notificaciones:', error));
+        }
+        document.addEventListener('DOMContentLoaded', actualizarContadorNotificaciones);
+        setInterval(actualizarContadorNotificaciones, 30000);
+    </script>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

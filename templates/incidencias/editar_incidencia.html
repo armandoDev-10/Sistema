@@ -1,0 +1,6 @@
+{% extends 'form_base.html' %}
+{% block form_title %}Editar incidencia: {{ incidencia.titulo }}{% endblock %}
+{% block button_text %}Guardar cambios{% endblock %}
+{% block extra_links %}
+    <a href="{% url 'lista_incidencias' %}">← Volver a incidencias</a>
+{% endblock %}

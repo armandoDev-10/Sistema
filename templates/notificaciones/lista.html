@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Mis notificaciones{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="fas fa-bell me-2"></i> Bandeja de notificaciones</h4>
+        <a href="{% url 'historial_notificaciones' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-history"></i> Historial
+        </a>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for notif in notificaciones %}
+            <div class="list-group-item list-group-item-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ notif.titulo }}</h5>
+                        <p class="mb-1">{{ notif.mensaje }}</p>
+                        <small class="text-muted">{{ notif.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <div>
+                        <a href="{% url 'marcar_notificacion' notif.pk %}" class="btn btn-sm btn-success">
+                            <i class="fas fa-check-circle"></i> Marcar como leída
+                        </a>
+                        {% if notif.enlace %}
+                            <a href="{{ notif.enlace }}" class="btn btn-sm btn-primary">Ver</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p>No tienes notificaciones pendientes.</p>
+                <a href="{% url 'historial_notificaciones' %}" class="btn btn-link">Ver historial</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

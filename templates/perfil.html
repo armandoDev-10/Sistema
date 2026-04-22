@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Mi perfil{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white rounded-circle p-2 text-primary">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                    <h3 class="mb-0">Mi perfil</h3>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="text-muted">Nombre de usuario</label>
+                        <p class="fw-bold">{{ user.username }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted">Correo electrónico</label>
+                        <p class="fw-bold">{{ user.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted">Rol</label>
+                        <p>
+                            {% if user.rol == 'lider' %}
+                                <span class="badge bg-purple text-white">Líder</span>
+                            {% elif user.rol == 'colaborador' %}
+                                <span class="badge bg-success">Colaborador</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Administrador</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted">Sucursal</label>
+                        <p class="fw-bold">{{ user.sucursal.nombre|default:"Sin sucursal" }}</p>
+                    </div>
+                </div>
+
+                {% if user.rol == 'lider' and user.sucursal %}
+                <div class="mt-4 pt-4 border-top">
+                    <label class="form-label fw-bold">Código para registro de colaboradores</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control font-monospace bg-light" id="codigoColaborador" value="{{ user.sucursal.codigo_colaborador }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copiarCodigo()">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                        <button class="btn btn-outline-danger" type="button" onclick="regenerarCodigo()">
+                            <i class="fas fa-sync-alt"></i> Regenerar
+                        </button>
+                    </div>
+                    <small class="text-muted">Comparte este código con los nuevos colaboradores. Si lo regeneras, el código anterior dejará de ser válido.</small>
+                </div>
+
+                <script>
+                function copiarCodigo() {
+                    var input = document.getElementById('codigoColaborador');
+                    input.select();
+                    document.execCommand('copy');
+                    alert('Código copiado al portapapeles');
+                }
+                function regenerarCodigo() {
+                    if (confirm('¿Estás seguro de que quieres regenerar el código de colaboradores? Los códigos anteriores dejarán de funcionar para nuevos registros.')) {
+                        window.location.href = "{% url 'regenerar_codigo_colaborador' %}";
+                    }
+                }
+                </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

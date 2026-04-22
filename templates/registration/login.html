@@ -1,0 +1,7 @@
+{% extends 'form_base.html' %}
+{% block form_title %}Iniciar sesión{% endblock %}
+{% block button_text %}Acceder{% endblock %}
+{% block extra_links %}
+    <a href="{% url 'password_reset' %}" class="d-block mb-1">¿Olvidaste tu contraseña?</a>
+    <a href="{% url 'registro' %}">¿No tienes cuenta? Regístrate</a>
+{% endblock %}

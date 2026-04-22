@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Reporte - {{ sucursal.nombre }}{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-0">Reporte cronológico de actividades</h4>
+            <small class="text-muted">Sucursal: {{ sucursal.nombre }} | Generado por: {{ user.username }}</small>
+        </div>
+        <a href="?exportar=1" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Exportar CSV</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Colaborador</th><th>Título</th><th>Descripción</th><th>Fecha actividad</th><th>Registrado el</th></tr>
+                </thead>
+                <tbody>
+                    {% for act in actividades %}
+                    <tr>
+                        <td>{{ act.colaborador.username }}</td>
+                        <td>{{ act.titulo }}</td>
+                        <td>{{ act.descripcion|truncatechars:80 }}</td>
+                        <td>{{ act.fecha_actividad|date:"d/m/Y" }}</td>
+                        <td>{{ act.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No hay actividades registradas en esta sucursal</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de actividad{% endblock %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">{{ actividad.titulo }}</h3>
+        <a href="{% url 'lista_actividades' %}" class="btn btn-light btn-sm">← Volver</a>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Colaborador:</strong> {{ actividad.colaborador.username }}</p>
+                <p><strong>Sucursal:</strong> {{ actividad.colaborador.sucursal.nombre }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Fecha de actividad:</strong> {{ actividad.fecha_actividad|date:"d/m/Y" }}</p>
+                <p><strong>Registrada el:</strong> {{ actividad.fecha_creacion|date:"d/m/Y H:i" }}</p>
+            </div>
+        </div>
+        <div class="mb-4">
+            <h5>Descripción</h5>
+            <div class="p-3 bg-light rounded">{{ actividad.descripcion|linebreaks }}</div>
+        </div>
+        
+        <h5>Evidencias fotográficas</h5>
+        {% if evidencias %}
+            <div class="row">
+                {% for ev in evidencias %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{{ ev.imagen.url }}" class="card-img-top" alt="Evidencia" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <p class="card-text">{{ ev.descripcion|default:"Sin descripción" }}</p>
+                            <small class="text-muted">Subido: {{ ev.subido_en|date:"d/m/Y H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">No hay evidencias para esta actividad.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
