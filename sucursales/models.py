@@ -8,6 +8,8 @@ from django.contrib.auth.models import AbstractUser
 import secrets
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    username = models.CharField(unique=True)
     ROLES = (
         ('admin', 'Administrador'),
         ('lider', 'Líder'),
